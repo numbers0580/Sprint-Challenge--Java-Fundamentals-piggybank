@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -63,6 +64,62 @@ public class CoinController {
         }
 
         System.out.println("The piggy bank holds $" + String.format("%.2f", inTheBank));
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/money/{amount}", produces = {"application/json"})
+    public ResponseEntity<?> changeTotals(@PathVariable double amount) {
+        List<Coin> coinList = new ArrayList<>();
+        coinrepos.findAll().iterator().forEachRemaining(coinList::add);
+
+        double inTheBank = 0.0;
+        for(Coin currentCoin : coinList) {
+            inTheBank += (currentCoin.getQuantity() * currentCoin.getValue());
+        }
+        // We should have inTheBank = 7.3 now, or whatever the current level is
+        // if we ran this multiple times
+
+        if(inTheBank >= amount) {
+            // Sufficient change to withdraw
+            for(Coin toWithdraw : coinList) {
+                if(toWithdraw.getQuantity() > 0) {
+                    // There's at least some coins to check for withdrawal
+                    if((toWithdraw.getQuantity() * toWithdraw.getValue()) <= amount) {
+                        // Use all of the coins
+                        System.out.println("QTY USED: " + toWithdraw.getQuantity() + " " + toWithdraw.getNameplural());
+                        amount -= (toWithdraw.getQuantity() * toWithdraw.getValue());
+                        toWithdraw.setQuantity(0);
+                    } else {
+                        // Find how many coins needed to get <= amount
+                        int qtyNeeded = (int)(amount / toWithdraw.getValue());
+                        System.out.println("QTY NEED: " + qtyNeeded + " " + toWithdraw.getNameplural());
+                        // double-check below
+                        if(toWithdraw.getQuantity() >= qtyNeeded) {
+                            amount -= qtyNeeded * toWithdraw.getValue();
+                            toWithdraw.setQuantity((toWithdraw.getQuantity() - qtyNeeded));
+                        }
+                    }
+                }
+            }
+            // At this point, amount should == 0.00
+            // Output non-zero quantity coins
+            double newTotal = 0.0;
+            for(Coin item : coinList) {
+                if(item.getQuantity() > 0) {
+                    if(item.getQuantity() == 1) {
+                        System.out.println(item.getQuantity() + " " + item.getName());
+                    } else {
+                        System.out.println(item.getQuantity() + " " + item.getNameplural());
+                    }
+                }
+                newTotal += (item.getQuantity() * item.getValue());
+            }
+            System.out.println("The piggy bank holds $" + String.format("%.2f", newTotal));
+        } else {
+            // Withdrawal attempt will result in overdraft
+            System.out.println("Money not available.");
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
