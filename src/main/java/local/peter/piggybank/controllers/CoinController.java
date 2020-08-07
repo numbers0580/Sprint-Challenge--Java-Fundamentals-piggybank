@@ -79,24 +79,28 @@ public class CoinController {
         }
         // We should have inTheBank = 7.3 now, or whatever the current level is
         // if we ran this multiple times
+        int bankCents = (int)(inTheBank * 100); // This is to resolve a rounding problem
+        int amtCents = (int)(amount * 100); // See comment above
 
-        if(inTheBank >= amount) {
+        if(bankCents >= amtCents) {
             // Sufficient change to withdraw
             for(Coin toWithdraw : coinList) {
                 if(toWithdraw.getQuantity() > 0) {
                     // There's at least some coins to check for withdrawal
-                    if((toWithdraw.getQuantity() * toWithdraw.getValue()) <= amount) {
+                    if((int)(100 * toWithdraw.getQuantity() * toWithdraw.getValue()) <= amtCents) {
                         // Use all of the coins
+                        System.out.println("Current amount left: " + amtCents);
                         System.out.println("QTY USED: " + toWithdraw.getQuantity() + " " + toWithdraw.getNameplural());
-                        amount -= (toWithdraw.getQuantity() * toWithdraw.getValue());
+                        amtCents -= (int)(100 * toWithdraw.getQuantity() * toWithdraw.getValue());
                         toWithdraw.setQuantity(0);
                     } else {
                         // Find how many coins needed to get <= amount
-                        int qtyNeeded = (int)(amount / toWithdraw.getValue());
+                        System.out.println("Current amount left: " + amount);
+                        int qtyNeeded = amtCents / (int)(100 * toWithdraw.getValue());
                         System.out.println("QTY NEED: " + qtyNeeded + " " + toWithdraw.getNameplural());
                         // double-check below
                         if(toWithdraw.getQuantity() >= qtyNeeded) {
-                            amount -= qtyNeeded * toWithdraw.getValue();
+                            amtCents -= (int)(100 * qtyNeeded * toWithdraw.getValue());
                             toWithdraw.setQuantity((toWithdraw.getQuantity() - qtyNeeded));
                         }
                     }
