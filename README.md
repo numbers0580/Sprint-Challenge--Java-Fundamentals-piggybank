@@ -23,9 +23,24 @@ Commit your code regularly and meaningfully. This helps both you (in case you ev
 Be prepared to demonstrate your understanding of this week's concepts by answering questions on the following topics. You might prepare by writing down your own answers before hand.
 
 1. Explain how you took advantage of Java's Object Oriented approach to solve the sprint challenge.
+  I was able to store the contents of the SQL database as an array of objects in Java and use Java's getters to access each property (key) of each object in the array.
+  This allowed me to easily parse out the data in the table that I could use in functions and loops to get whatever desired result/output needed.
+
 2. Explain the three steps needed to run a Java application (using the JDK) including what each step does and how those step correlate to running a JavaScript application.
-3. Explain how Java being a strongly typed language affected you solution.
+  A: javac packageName\*.java -- Compiles my source code into bytecode.
+  B: jar cvfe packageName.jar packageName.StartingClassName packageName\*.class -- Notes which class starts the application and aggregates all the class files into a manifest file
+  C: java -jar packageName.jar -- executes (runs) the application following the rules and order listed in the Manifest
+
+3. Explain how Java being a strongly typed language affected your solution.
+  By making sure that the data typed being passed to another function is compatible with data type in the latter function's parameter, I can ensure I won't get
+  weird logic errors. For example: If i accidentally passed in a String and a boolean to a function that was expecting an int and a double (perhaps typos in variable names)
+  to multiply, javac wouldn't even compile and instead would inform me of the incompatible data types while writing a negative review of by abilities to my LinkedIn profile.
+
 4. Can you explain the differences between Abstract Classes and Interfaces including how they are used in your application?
+  Abstract classes (which I learned to call superclasses) have constructors that applies default values or behaviors to the class from which it's Extended.
+  Interfaces are able to describe class behaviors but cannot execute them unless they're Implemented.
+  Also, methods and data types in Interfaces are Public by default where abstract classes can still use all 3: Public, Protected, Private
+  Each Java class can only extend one Abstract class, but each Java class can implement as many Interfaces as necessary
 
 ## Instructions
 
